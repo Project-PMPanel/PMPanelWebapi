@@ -206,7 +206,7 @@ public class WebAPIController {
     public Result postUserTraffic(HttpServletRequest request, @RequestBody Map<String, Object> map) {
         String nodeId = request.getParameter("node_id");
         List<Map<String, Object>> listData = (List<Map<String, Object>>) map.get("data");
-        // log.info("/users/traffic\nnode_id:{}\ndata:{}", nodeId, listData);
+        log.debug("/users/traffic\nnode_id:{}\ndata:{}", nodeId, listData);
         Long thisTimeBandwidth = 0L;
         if (ObjectUtil.isEmpty(nodeId)) {
             return Result.error();
@@ -265,7 +265,7 @@ public class WebAPIController {
         if (ObjectUtil.isEmpty(nodeId)) {
             return Result.error();
         }
-        // log.info("/nodes/{}/info\nnode_id:{}\ndata:{}", nodeId, nodeId, data);
+        log.debug("/nodes/{}/info\nnode_id:{}\ndata:{}", nodeId, nodeId, data);
         SsNodeInfo ssNodeInfo = new SsNodeInfo();
         Long now = new Date().getTime() / 1000;
         if (ObjectUtil.isNotEmpty(data)) {
@@ -285,7 +285,7 @@ public class WebAPIController {
     public Result postAliveIP(HttpServletRequest request, @RequestBody Map<String, Object> map) {
         String nodeId = request.getParameter("node_id");
         List<Map<String, Object>> listData = (List<Map<String, Object>>) map.get("data");
-        // log.info("/users/aliveip\nnode_id:{}\ndata:{}", nodeId, listData);
+        log.debug("/users/aliveip\nnode_id:{}\ndata:{}", nodeId, listData);
         if (ObjectUtil.isEmpty(nodeId)) {
             return Result.error();
         }
@@ -326,7 +326,7 @@ public class WebAPIController {
     public Result postDetectLog(HttpServletRequest request, @RequestBody Map<String, Object> map) {
         String nodeId = request.getParameter("node_id");
         List<Map<String, Object>> listData = (List<Map<String, Object>>) map.get("data");
-        // log.info("/users/detectlog\nnode_id:{}\ndata:{}", nodeId, listData);
+        log.debug("/users/detectlog\nnode_id:{}\ndata:{}", nodeId, listData);
         if (ObjectUtil.isEmpty(nodeId)) {
             return Result.error();
         }
@@ -364,7 +364,7 @@ public class WebAPIController {
     public Result blockIp(HttpServletRequest request, @RequestBody Map<String, Object> map) {
         String nodeId = request.getParameter("node_id");
         List<Map<String, String>> listData = (List<Map<String, String>>) map.get("data");
-        // log.info("/users/block_ips\nnode_id:{}\ndata:{}", nodeId, listData);
+        log.debug("/users/block_ips\nnode_id:{}\ndata:{}", nodeId, listData);
         if (ObjectUtil.isEmpty(nodeId)) {
             return Result.error();
         }
