@@ -218,7 +218,8 @@ public class WebAPIController {
         }
         List<User> userList = new ArrayList<>();
         List<UserTrafficLog> userTrafficLogList = new ArrayList<>();
-        Long now = new Date().getTime() / 1000;
+        Date dateNow = new Date();
+        Long now = dateNow.getTime() / 1000;
         if (ObjectUtil.isNotEmpty(listData) && listData.size() > 0) {
             Iterator<Map<String, Object>> iterator = listData.iterator();
             while (iterator.hasNext()) {
@@ -231,6 +232,7 @@ public class WebAPIController {
                 user.setU(user.getU() + Long.parseLong(u) * ssNode.getTrafficRate().longValue());
                 user.setD(user.getD() + Long.parseLong(d) * ssNode.getTrafficRate().longValue());
                 thisTimeBandwidth += Long.parseLong(u) * ssNode.getTrafficRate().longValue() + Long.parseLong(d) * ssNode.getTrafficRate().longValue();
+                user.setLastUsedDate(dateNow);
                 userList.add(user);
                 // 新增TrafficLog
                 UserTrafficLog userTrafficLog = new UserTrafficLog();

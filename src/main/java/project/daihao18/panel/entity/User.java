@@ -180,6 +180,11 @@ public class User implements Serializable {
     private Integer nodeGroup;
 
     /**
+     * 上次使用时间
+     */
+    private Date lastUsedDate;
+
+    /**
      * 是否是管理员
      */
     private Integer isAdmin;
