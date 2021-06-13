@@ -262,10 +262,14 @@ public class WebAPIController {
 
     @Auth
     @PostMapping("/nodes/{id}/info")
-    public Result postNodeInfo(HttpServletRequest request, @RequestBody Map<String, Object> data) {
+    public Result postNodeInfo(HttpServletRequest request, @PathVariable Integer id, @RequestBody Map<String, Object> data) {
         String nodeId = request.getParameter("node_id");
         if (ObjectUtil.isEmpty(nodeId)) {
-            return Result.error();
+            if (ObjectUtil.isNotEmpty(id)) {
+                nodeId = String.valueOf(id);
+            } else {
+                return Result.error();
+            }
         }
         log.debug("/nodes/{}/info\nnode_id:{}\ndata:{}", nodeId, nodeId, data);
         SsNodeInfo ssNodeInfo = new SsNodeInfo();
