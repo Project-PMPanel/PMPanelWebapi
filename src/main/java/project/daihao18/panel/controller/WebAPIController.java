@@ -97,10 +97,6 @@ public class WebAPIController {
         }
         Integer nodeid = Integer.parseInt(nodeId);
         SsNode ssNode = ssNodeService.getById(nodeid);
-        Long now = new Date().getTime() / 1000;
-        ssNode.setNodeHeartbeat(now.intValue());
-        // 更新心跳
-        ssNodeService.updateById(ssNode);
         // 需要返回的userList
         List<Map<String, Object>> data = new ArrayList<>();
         // 节点流量耗尽则返回 null
@@ -272,8 +268,12 @@ public class WebAPIController {
             }
         }
         log.debug("/nodes/{}/info\nnode_id:{}\ndata:{}", nodeId, nodeId, data);
-        SsNodeInfo ssNodeInfo = new SsNodeInfo();
+        SsNode ssNode = ssNodeService.getById(Integer.parseInt(nodeId));
         Long now = new Date().getTime() / 1000;
+        ssNode.setNodeHeartbeat(now.intValue());
+        // 更新心跳
+        ssNodeService.updateById(ssNode);
+        SsNodeInfo ssNodeInfo = new SsNodeInfo();
         if (ObjectUtil.isNotEmpty(data)) {
             String load = data.get("load").toString();
             String uptime = data.get("uptime").toString();
