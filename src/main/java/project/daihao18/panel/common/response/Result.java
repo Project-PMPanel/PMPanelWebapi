@@ -19,14 +19,14 @@ public class Result implements Serializable {
     // 通用返回成功
     public static Result success() {
         Result r = new Result();
-        r.setRet(1);
+        r.setRet(200);
         return r;
     }
 
     // 通用返回失败，未知错误
     public static Result error() {
         Result r = new Result();
-        r.setRet(0);
+        r.setRet(400);
         return r;
     }
 

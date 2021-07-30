@@ -67,7 +67,7 @@ public class AuthAspect {
                 return null;
             }
             // 请求带的muKey
-            String key = request.getParameter("key");
+            String key = request.getHeader("key");
             if (ObjectUtil.isEmpty(key)) {
                 // key为null
                 Map<String, Object> map = new HashMap<>();
@@ -81,8 +81,8 @@ public class AuthAspect {
             if (ObjectUtil.notEqual(muKey, key)) {
                 // key非法
                 Map<String, Object> map = new HashMap<>();
-                map.put("ret", 0);
-                map.put("data", "Token is invalid.");
+                map.put("ret", 400);
+                map.put("data", "APIKey is invalid.");
                 response.setContentType("application/json;charset=UTF-8");
                 PrintWriter out = response.getWriter();
                 out.write(gson.toJson(map));
