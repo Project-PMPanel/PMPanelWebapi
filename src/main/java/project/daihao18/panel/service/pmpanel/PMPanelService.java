@@ -51,8 +51,7 @@ public class PMPanelService implements PanelService {
     public Result getNode(Map<String, Object> params) {
         try {
             String type = params.get("type").toString();
-            Double tmpId = (Double) params.get("nodeId");
-            Integer id = tmpId.intValue();
+            Integer id = Integer.parseInt(params.get("nodeId").toString());
             PMPNode node = (PMPNode) getNodeService(type).getById(id);
             return ObjectUtil.isEmpty(node) ? Result.error().data("Can't query this node, please check nodeId") : Result.success().data(node);
         } catch (Exception e) {
@@ -66,8 +65,7 @@ public class PMPanelService implements PanelService {
     public Result getUsers(Map<String, Object> params) {
         try {
             String type = params.get("type").toString();
-            Double tmpId = (Double) params.get("nodeId");
-            Integer id = tmpId.intValue();
+            Integer id = Integer.parseInt(params.get("nodeId").toString());
             Integer nodeClass = 0;
             PMPNode node = (PMPNode) getNodeService(type).getById(id);
             nodeClass = node.getClazz();
@@ -76,7 +74,7 @@ public class PMPanelService implements PanelService {
 
             Boolean all = false;
             if (ObjectUtil.isNotEmpty(params.get("all"))) {
-                all = (Boolean) params.get("all");
+                all = Boolean.parseBoolean(params.get("all").toString());
             }
             // 需要返回的users
             List<Map<String, Object>> addOrUpdateUser = new ArrayList<>();
@@ -95,6 +93,7 @@ public class PMPanelService implements PanelService {
                         map.put("id", user.getId());
                         map.put("passwd", user.getPasswd());
                         map.put("speedlimit", new BigDecimal(user.getNodeSpeedlimit()));
+                        map.put("connector", user.getNodeConnector());
                         addOrUpdateUser.add(map);
                     }
                 }
@@ -112,6 +111,7 @@ public class PMPanelService implements PanelService {
                                 map.put("id", thisUser.getId());
                                 map.put("passwd", thisUser.getPasswd());
                                 map.put("speedlimit", new BigDecimal(thisUser.getNodeSpeedlimit()));
+                                map.put("connector", thisUser.getNodeConnector());
                                 addOrUpdateUser.add(map);
                             }
                             delFlag = false;
@@ -140,6 +140,7 @@ public class PMPanelService implements PanelService {
                         map.put("id", thisUser.getId());
                         map.put("passwd", thisUser.getPasswd());
                         map.put("speedlimit", new BigDecimal(thisUser.getNodeSpeedlimit()));
+                        map.put("connector", thisUser.getNodeConnector());
                         addOrUpdateUser.add(map);
                     }
                 }
@@ -156,8 +157,7 @@ public class PMPanelService implements PanelService {
     public Result getRules(Map<String, Object> params) {
         try {
             String type = params.get("type").toString();
-            Double tmpId = (Double) params.get("nodeId");
-            Integer id = tmpId.intValue();
+            Integer id = Integer.parseInt(params.get("nodeId").toString());
 
             // 根据type和id查询指定审计规则,如果存在,则返回,如果不存在,则返回所有审计规则
             List<PMPNodeWithDetect> rules = nodeWithDetectService.getByTypeAndNodeId(type, id);

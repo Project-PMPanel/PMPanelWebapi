@@ -31,19 +31,19 @@ public class APIController {
 
     @Auth
     @GetMapping("/node")
-    public Result getNode(@RequestBody Map<String, Object> params) {
+    public Result getNode(@RequestParam Map<String, Object> params) {
         return apiService.getNode(params);
     }
 
     @Auth
     @GetMapping("/users")
-    public Result getUsers(@RequestBody Map<String, Object> params) {
+    public Result getUsers(@RequestParam Map<String, Object> params) {
         return apiService.getUsers(params);
     }
 
     @Auth
     @GetMapping("/rules")
-    public Result getRules(@RequestBody Map<String, Object> params) {
+    public Result getRules(@RequestParam Map<String, Object> params) {
         return apiService.getRules(params);
     }
 

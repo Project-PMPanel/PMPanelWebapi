@@ -59,7 +59,7 @@ public class AuthAspect {
             if (ObjectUtil.isEmpty(muKey)) {
                 // webapi的key为null
                 Map<String, Object> map = new HashMap<>();
-                map.put("ret", 0);
+                map.put("ret", 400);
                 map.put("data", "Server Key is null.");
                 response.setContentType("application/json;charset=UTF-8");
                 PrintWriter out = response.getWriter();
@@ -67,11 +67,11 @@ public class AuthAspect {
                 return null;
             }
             // 请求带的muKey
-            String key = request.getHeader("key");
+            String key = request.getHeader("key").toLowerCase();
             if (ObjectUtil.isEmpty(key)) {
                 // key为null
                 Map<String, Object> map = new HashMap<>();
-                map.put("ret", 0);
+                map.put("ret", 400);
                 map.put("data", "Your key is null.");
                 response.setContentType("application/json;charset=UTF-8");
                 PrintWriter out = response.getWriter();
