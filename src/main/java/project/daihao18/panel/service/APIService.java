@@ -25,6 +25,10 @@ public class APIService {
         return panelService.getRules(params);
     }
 
+    public Result postOnline(Map<String, Object> params) {
+        return panelService.postOnline(params);
+    }
+
     public Result postTraffic(Map<String, Object> params) {
         return panelService.postTraffic(params);
     }

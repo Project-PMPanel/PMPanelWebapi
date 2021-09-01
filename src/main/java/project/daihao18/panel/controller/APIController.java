@@ -48,6 +48,12 @@ public class APIController {
     }
 
     @Auth
+    @PostMapping("/online")
+    public Result postOnline(@RequestBody Map<String, Object> params) {
+        return apiService.postOnline(params);
+    }
+
+    @Auth
     @PostMapping("/traffic")
     public Result postTraffic(@RequestBody Map<String, Object> params) {
         return apiService.postTraffic(params);

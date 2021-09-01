@@ -1,6 +1,7 @@
 package project.daihao18.panel.service.pmpanel;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class PMPanelService implements PanelService {
 
     @Autowired
     private PMPDetectListService detectListService;
+
+    @Autowired
+    private PMPOnlineService pmpOnlineService;
 
     private NodeService getNodeService(String type) {
         switch (type) {
@@ -170,6 +174,41 @@ public class PMPanelService implements PanelService {
         } catch (Exception e) {
             return Result.error();
         }
+    }
+
+    @Override
+    public Result postOnline(Map<String, Object> params) {
+        try {
+            Double tmpId = (Double) params.get("nodeId");
+            Integer id = tmpId.intValue();
+            String type = params.get("type").toString();
+
+            List<PMPOnline> onlineList = new ArrayList<>();
+            List<Map<String, Object>> onlines = (List<Map<String, Object>>) params.get("onlines");
+            Date now = new Date();
+            if (ObjectUtil.isNotEmpty(onlines) && onlines.size() > 0) {
+                Iterator<Map<String, Object>> iterator = onlines.iterator();
+                while (iterator.hasNext()) {
+                    Map<String, Object> map = iterator.next();
+                    PMPOnline online = new PMPOnline();
+                    Double tmpUId = (Double) map.get("user_id");
+                    online.setUserId(tmpUId.intValue());
+                    online.setTime(now);
+                    online.setIp(map.get("ip").toString());
+                    online.setType(type);
+                    online.setNodeId(id);
+                    onlineList.add(online);
+                }
+                // 先删除该节点之前的所有记录
+                pmpOnlineService.remove(new QueryWrapper<PMPOnline>().eq("node_id", id).eq("type", type));
+                if (pmpOnlineService.saveBatch(onlineList)) {
+                    return Result.success();
+                }
+            }
+        } catch (Exception e) {
+            return Result.error();
+        }
+        return Result.error();
     }
 
     @Override

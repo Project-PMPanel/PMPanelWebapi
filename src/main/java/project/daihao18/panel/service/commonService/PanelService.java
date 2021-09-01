@@ -11,5 +11,7 @@ public interface PanelService {
 
     Result getRules(Map<String, Object> params);
 
+    Result postOnline(Map<String, Object> params);
+
     Result postTraffic(Map<String, Object> params);
 }
