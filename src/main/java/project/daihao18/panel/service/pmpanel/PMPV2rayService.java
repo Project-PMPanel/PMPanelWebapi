@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.daihao18.panel.common.utils.FlowSizeConverterUtil;
-import project.daihao18.panel.entity.pmpanel.PMPUser;
-import project.daihao18.panel.entity.pmpanel.PMPUserTrafficLog;
-import project.daihao18.panel.entity.pmpanel.PMPV2ray;
+import project.daihao18.panel.entity.pmpanel.*;
 import project.daihao18.panel.mapper.pmpanel.PMPV2rayMapper;
 import project.daihao18.panel.service.commonService.NodeService;
 
@@ -86,13 +84,16 @@ public class PMPV2rayService extends ServiceImpl<PMPV2rayMapper, PMPV2ray> imple
                 // 批量保存
                 userService.updateBatchById(userList);
                 PMPUserTrafficLogService.saveBatch(userTrafficLogList);
-                // 更新心跳
-                PMPV2Ray.setHeartbeat(dateNow);
-                this.updateById(PMPV2Ray);
             }
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean updateHeartBeat(PMPNode node) {
+        node.setHeartbeat(new Date());
+        return this.updateById((PMPV2ray) node);
     }
 }

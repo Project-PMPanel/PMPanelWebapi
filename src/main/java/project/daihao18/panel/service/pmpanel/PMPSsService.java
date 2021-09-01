@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.daihao18.panel.common.utils.FlowSizeConverterUtil;
+import project.daihao18.panel.entity.pmpanel.PMPNode;
 import project.daihao18.panel.entity.pmpanel.PMPSs;
 import project.daihao18.panel.entity.pmpanel.PMPUser;
 import project.daihao18.panel.entity.pmpanel.PMPUserTrafficLog;
@@ -86,13 +87,16 @@ public class PMPSsService extends ServiceImpl<PMPSsMapper, PMPSs> implements ISe
                 // 批量保存
                 userService.updateBatchById(userList);
                 PMPUserTrafficLogService.saveBatch(userTrafficLogList);
-                // 更新心跳
-                PMPSs.setHeartbeat(dateNow);
-                this.updateById(PMPSs);
             }
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean updateHeartBeat(PMPNode node) {
+        node.setHeartbeat(new Date());
+        return this.updateById((PMPSs) node);
     }
 }

@@ -72,6 +72,8 @@ public class PMPanelService implements PanelService {
             Integer id = Integer.parseInt(params.get("nodeId").toString());
             Integer nodeClass = 0;
             PMPNode node = (PMPNode) getNodeService(type).getById(id);
+            // 更新节点心跳
+            getNodeService(type).updateHeartBeat(node);
             nodeClass = node.getClazz();
             // 本次的userList
             List<PMPUser> userList = userService.getEnabledUsers(nodeClass);
@@ -183,6 +185,9 @@ public class PMPanelService implements PanelService {
             Integer id = tmpId.intValue();
             String type = params.get("type").toString();
 
+            // 先删除该节点之前的所有记录
+            pmpOnlineService.remove(new QueryWrapper<PMPOnline>().eq("node_id", id).eq("type", type));
+
             List<PMPOnline> onlineList = new ArrayList<>();
             List<Map<String, Object>> onlines = (List<Map<String, Object>>) params.get("onlines");
             Date now = new Date();
@@ -199,8 +204,6 @@ public class PMPanelService implements PanelService {
                     online.setNodeId(id);
                     onlineList.add(online);
                 }
-                // 先删除该节点之前的所有记录
-                pmpOnlineService.remove(new QueryWrapper<PMPOnline>().eq("node_id", id).eq("type", type));
                 if (pmpOnlineService.saveBatch(onlineList)) {
                     return Result.success();
                 }

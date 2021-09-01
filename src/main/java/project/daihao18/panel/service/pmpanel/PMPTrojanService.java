@@ -7,9 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.daihao18.panel.common.utils.FlowSizeConverterUtil;
-import project.daihao18.panel.entity.pmpanel.PMPTrojan;
-import project.daihao18.panel.entity.pmpanel.PMPUser;
-import project.daihao18.panel.entity.pmpanel.PMPUserTrafficLog;
+import project.daihao18.panel.entity.pmpanel.*;
 import project.daihao18.panel.mapper.pmpanel.PMPTrojanMapper;
 import project.daihao18.panel.service.commonService.NodeService;
 
@@ -87,13 +85,16 @@ public class PMPTrojanService extends ServiceImpl<PMPTrojanMapper, PMPTrojan> im
                 // 批量保存
                 userService.updateBatchById(userList);
                 PMPUserTrafficLogService.saveBatch(userTrafficLogList);
-                // 更新心跳
-                PMPTrojan.setHeartbeat(dateNow);
-                this.updateById(PMPTrojan);
             }
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean updateHeartBeat(PMPNode node) {
+        node.setHeartbeat(new Date());
+        return this.updateById((PMPTrojan) node);
     }
 }
