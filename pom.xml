@@ -10,7 +10,7 @@
     </parent>
     <groupId>project.daihao18.panel</groupId>
     <artifactId>webapi</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>panel_backend_webapi</name>
     <description>webapi of daihao18's panel</description>
 
