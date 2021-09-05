@@ -67,7 +67,7 @@ public class AuthAspect {
                 return null;
             }
             // 请求带的muKey
-            String key = request.getHeader("key").toLowerCase();
+            String key = request.getHeader("key");
             if (ObjectUtil.isEmpty(key)) {
                 // key为null
                 Map<String, Object> map = new HashMap<>();
