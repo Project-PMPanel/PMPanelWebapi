@@ -57,8 +57,14 @@ public class PMPanelService implements PanelService {
             String type = params.get("type").toString();
             Integer id = Integer.parseInt(params.get("nodeId").toString());
             PMPNode node = (PMPNode) getNodeService(type).getById(id);
-            return ObjectUtil.isEmpty(node) ? Result.error().data("Can't query this node, please check nodeId") : Result.success().data(node);
+            if (ObjectUtil.isEmpty(node)) {
+                return Result.error().data("Can't query this node, please check nodeId");
+            } else {
+                log.info("query node info successfully");
+                return Result.success().data(node);
+            }
         } catch (Exception e) {
+            log.error(e.toString());
             return Result.error();
         }
     }
@@ -153,8 +159,10 @@ public class PMPanelService implements PanelService {
             }
             data.put("addOrUpdate", addOrUpdateUser);
             lastUserList = userList;
+            log.info("query user list successfully");
             return Result.success().data(data);
         } catch (Exception e) {
+            log.error(e.toString());
             return Result.error();
         }
     }
@@ -169,11 +177,14 @@ public class PMPanelService implements PanelService {
             List<PMPNodeWithDetect> rules = nodeWithDetectService.getByTypeAndNodeId(type, id);
             if (ObjectUtil.isNotEmpty(rules)) {
                 // 根据rules的detect_list_id查找具体的rules
+                log.info("query rule list successfully");
                 return Result.success().data(detectListService.getDetectsByTypeAndNodeId(type, id));
             } else {
+                log.info("query rule list successfully");
                 return Result.success().data(detectListService.list());
             }
         } catch (Exception e) {
+            log.error(e.toString());
             return Result.error();
         }
     }
@@ -205,10 +216,12 @@ public class PMPanelService implements PanelService {
                     onlineList.add(online);
                 }
                 if (pmpOnlineService.saveBatch(onlineList)) {
+                    log.info("post user online successfully for {} node, id {}", type, id);
                     return Result.success();
                 }
             }
         } catch (Exception e) {
+            log.error(e.toString());
             return Result.error();
         }
         return Result.error();
@@ -218,9 +231,17 @@ public class PMPanelService implements PanelService {
     public Result postTraffic(Map<String, Object> params) {
         try {
             String type = params.get("type").toString();
+            Double tmpId = (Double) params.get("nodeId");
+            Integer id = tmpId.intValue();
             // 同步节点流量
-            return getNodeService(type).postTraffic(params) ? Result.success() : Result.error();
+            if (getNodeService(type).postTraffic(params)) {
+                log.info("post user traffic successfully for {} node, id {}", type, id);
+                return Result.success();
+            } else {
+                return Result.error();
+            }
         } catch (Exception e) {
+            log.error(e.toString());
             return Result.error();
         }
     }
