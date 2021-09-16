@@ -192,7 +192,7 @@ public class PMPanelService implements PanelService {
     @Override
     public Result postOnline(Map<String, Object> params) {
         try {
-            Double tmpId = (Double) params.get("nodeId");
+            Double tmpId = Double.valueOf(params.get("nodeId").toString());
             Integer id = tmpId.intValue();
             String type = params.get("type").toString();
 
@@ -231,7 +231,7 @@ public class PMPanelService implements PanelService {
     public Result postTraffic(Map<String, Object> params) {
         try {
             String type = params.get("type").toString();
-            Double tmpId = (Double) params.get("nodeId");
+            Double tmpId = Double.valueOf(params.get("nodeId").toString());
             Integer id = tmpId.intValue();
             // 同步节点流量
             if (getNodeService(type).postTraffic(params)) {

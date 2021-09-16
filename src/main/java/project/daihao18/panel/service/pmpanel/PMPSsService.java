@@ -38,7 +38,7 @@ public class PMPSsService extends ServiceImpl<PMPSsMapper, PMPSs> implements ISe
     @Override
     public boolean postTraffic(Map<String, Object> params) {
         try {
-            Double tmpId = (Double) params.get("nodeId");
+            Double tmpId = Double.valueOf(params.get("nodeId").toString());
             Integer id = tmpId.intValue();
 
             // 查该节点

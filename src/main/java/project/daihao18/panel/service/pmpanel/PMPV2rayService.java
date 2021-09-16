@@ -35,7 +35,7 @@ public class PMPV2rayService extends ServiceImpl<PMPV2rayMapper, PMPV2ray> imple
     @Override
     public boolean postTraffic(Map<String, Object> params) {
         try {
-            Double tmpId = (Double) params.get("nodeId");
+            Double tmpId = Double.valueOf(params.get("nodeId").toString());
             Integer id = tmpId.intValue();
 
             // 查该节点
