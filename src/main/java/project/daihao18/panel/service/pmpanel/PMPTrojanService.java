@@ -2,6 +2,7 @@ package project.daihao18.panel.service.pmpanel;
 
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class PMPTrojanService extends ServiceImpl<PMPTrojanMapper, PMPTrojan> im
     @Autowired
     private PMPUserTrafficLogService PMPUserTrafficLogService;
 
+    @Autowired
+    private PMPOnlineService pmpOnlineService;
+
     @Override
     public PMPTrojan getById(Integer id) {
         return super.getById(id);
@@ -51,6 +55,7 @@ public class PMPTrojanService extends ServiceImpl<PMPTrojanMapper, PMPTrojan> im
             Long now = dateNow.getTime() / 1000;
 
             List<Map<String, Object>> users = (List<Map<String, Object>>) params.get("users");
+            List<PMPOnline> onlineList = new ArrayList<>();
             Long thisTimeUpload = 0L;
             Long thisTimeDownload = 0L;
 
@@ -81,10 +86,26 @@ public class PMPTrojanService extends ServiceImpl<PMPTrojanMapper, PMPTrojan> im
                     userTrafficLog.setIp(user.get("ip").toString());
                     userTrafficLog.setLogTime(now.intValue());
                     userTrafficLogList.add(userTrafficLog);
+                    // 兼容性存储
+                    if (ObjectUtil.isNotEmpty(user.get("ip").toString())) {
+                        // 新增Online表记录
+                        // 先删除该节点之前的所有记录
+                        pmpOnlineService.remove(new QueryWrapper<PMPOnline>().eq("node_id", id).eq("type", "ss"));
+                        PMPOnline online = new PMPOnline();
+                        online.setUserId(uid.intValue());
+                        online.setTime(dateNow);
+                        online.setIp(user.get("ip").toString());
+                        online.setType("ss");
+                        online.setNodeId(id);
+                        onlineList.add(online);
+                    }
                 }
                 // 批量保存
                 userService.updateBatchById(userList);
                 PMPUserTrafficLogService.saveBatch(userTrafficLogList);
+                if (ObjectUtil.isNotEmpty(onlineList)) {
+                    pmpOnlineService.saveBatch(onlineList);
+                }
             }
             return true;
         } catch (Exception e) {

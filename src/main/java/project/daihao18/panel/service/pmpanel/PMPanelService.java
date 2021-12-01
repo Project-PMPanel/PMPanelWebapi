@@ -6,12 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.daihao18.panel.common.response.Result;
-import project.daihao18.panel.entity.pmpanel.*;
+import project.daihao18.panel.entity.pmpanel.PMPNode;
+import project.daihao18.panel.entity.pmpanel.PMPNodeWithDetect;
+import project.daihao18.panel.entity.pmpanel.PMPOnline;
+import project.daihao18.panel.entity.pmpanel.PMPUser;
 import project.daihao18.panel.service.commonService.NodeService;
 import project.daihao18.panel.service.commonService.PanelService;
 import project.daihao18.panel.service.commonService.UserService;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Slf4j
@@ -83,84 +85,7 @@ public class PMPanelService implements PanelService {
             nodeClass = node.getClazz();
             // 本次的userList
             List<PMPUser> userList = userService.getEnabledUsers(nodeClass);
-
-            Boolean all = false;
-            if (ObjectUtil.isNotEmpty(params.get("all"))) {
-                all = Boolean.parseBoolean(params.get("all").toString());
-            }
-            // 需要返回的users
-            List<Map<String, Object>> addOrUpdateUser = new ArrayList<>();
-            List<Map<String, Object>> delUser = new ArrayList<>();
-            // 最后返回的map
-            Map<String, Object> data = new HashMap<>();
-            // 对比上次的可用用户列表
-            if (all || ObjectUtil.isEmpty(lastUserList)) {
-                // 请求所有用户
-                Iterator<PMPUser> iterator = userList.iterator();
-                while (iterator.hasNext()) {
-                    PMPUser user = iterator.next();
-                    // 去除超出流量的用户
-                    if (user.getTransferEnable() >= (user.getU() + user.getD())) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", user.getId());
-                        map.put("passwd", user.getPasswd());
-                        map.put("speedlimit", new BigDecimal(user.getNodeSpeedlimit()));
-                        map.put("connector", user.getNodeConnector());
-                        addOrUpdateUser.add(map);
-                    }
-                }
-                lastUserList = userList;
-            } else {
-                // 筛选更新列表和删除列表
-                for (PMPUser lastUser : lastUserList) {
-                    Boolean delFlag = true;
-                    for (PMPUser thisUser : userList) {
-                        // id相同
-                        if (ObjectUtil.equals(lastUser.getId(), thisUser.getId())) {
-                            // 有其他的不同,加入更新列表
-                            if (ObjectUtil.notEqual(thisUser.getPasswd(), lastUser.getPasswd()) || ObjectUtil.notEqual(thisUser.getPasswd(), lastUser.getPasswd()) || ObjectUtil.notEqual(thisUser.getNodeSpeedlimit(), lastUser.getNodeSpeedlimit())) {
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("id", thisUser.getId());
-                                map.put("passwd", thisUser.getPasswd());
-                                map.put("speedlimit", new BigDecimal(thisUser.getNodeSpeedlimit()));
-                                map.put("connector", thisUser.getNodeConnector());
-                                addOrUpdateUser.add(map);
-                            }
-                            delFlag = false;
-                            break;
-                        }
-                    }
-                    if (delFlag) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", lastUser.getId());
-                        delUser.add(map);
-                    }
-                }
-                data.put("addOrUpdate", addOrUpdateUser);
-                data.put("delete", delUser);
-                // 筛选新增列表
-                for (PMPUser thisUser : userList) {
-                    Boolean addFlag = true;
-                    for (PMPUser lastUser : lastUserList) {
-                        if (ObjectUtil.equals(thisUser.getId(), lastUser.getId())) {
-                            addFlag = false;
-                            break;
-                        }
-                    }
-                    if (addFlag) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", thisUser.getId());
-                        map.put("passwd", thisUser.getPasswd());
-                        map.put("speedlimit", new BigDecimal(thisUser.getNodeSpeedlimit()));
-                        map.put("connector", thisUser.getNodeConnector());
-                        addOrUpdateUser.add(map);
-                    }
-                }
-            }
-            data.put("addOrUpdate", addOrUpdateUser);
-            lastUserList = userList;
-            log.info("query user list successfully");
-            return Result.success().data(data);
+            return Result.success().data(userList);
         } catch (Exception e) {
             log.error(e.toString());
             return Result.error();
@@ -207,7 +132,14 @@ public class PMPanelService implements PanelService {
                 while (iterator.hasNext()) {
                     Map<String, Object> map = iterator.next();
                     PMPOnline online = new PMPOnline();
-                    Double tmpUId = (Double) map.get("user_id");
+                    // 兼容 field id
+                    Object tmpUserId = map.get("user_id");
+                    Double tmpUId;
+                    if (ObjectUtil.isEmpty(tmpUserId)) {
+                        tmpUId = Double.valueOf(map.get("id").toString());
+                    } else {
+                        tmpUId = Double.valueOf(tmpUserId.toString());
+                    }
                     online.setUserId(tmpUId.intValue());
                     online.setTime(now);
                     online.setIp(map.get("ip").toString());
