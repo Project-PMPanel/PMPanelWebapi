@@ -30,6 +30,7 @@ public class PMPUserService extends ServiceImpl<PMPUserMapper, PMPUser> implemen
                 .ge("class", nodeClass)
                 .eq("enable", 1)
                 .gt("expire_in", new Date())
+                .gtSql("transfer_enable", "u+d")
                 .or()
                 .eq("is_admin", 1);
         return this.list(userQueryWrapper);
